@@ -1,0 +1,12 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "simple-jwt-api"
+resolve_s3 = true
+s3_prefix = "simple-jwt-api"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+# Replace <ENVIRONMENT_ID> with your actual PingOne Environment ID
+parameter_overrides = "PingOneIssuer=\"https://auth.pingone.com/<ENVIRONMENT_ID>/as\" PingOneJwksUrl=\"https://auth.pingone.com/<ENVIRONMENT_ID>/as/jwks\""
+image_repositories = []
