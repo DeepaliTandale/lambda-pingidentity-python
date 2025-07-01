@@ -7,35 +7,17 @@ A minimal serverless API demonstrating JWT authentication with PingOne using AWS
 ### High-Level Flow
 ![project2025-Severless-Page-2.jpg](ArchitectureDiagram.jpg)
 
+## Technologies Used
+
+- **AWS Lambda** - Serverless compute
+- **API Gateway** - HTTP API with custom authorizer
+- **PingOne** - Identity provider and JWT issuer
+- **Python 3.9** - Runtime environment
+- **AWS SAM** - Infrastructure as Code
+
 ### Detailed Authentication Flow
 
-1. **Client Request**
-    - Client sends HTTP request with `Authorization: Bearer <JWT_TOKEN>` header
-    - Request hits API Gateway endpoint
-
-2. **API Gateway**
-    - Receives request and triggers custom JWT Authorizer
-    - Passes JWT token to authorizer function
-
-2a. **JWT Authorizer Lambda**
-- Extracts JWT token from Authorization header
-- Fetches PingOne's public keys from JWKS endpoint
-- Validates JWT signature, issuer, and expiration
-- Returns IAM policy (Allow/Deny) with user context
-
-2b. **PingOne Integration**
-- Authorizer validates token against PingOne's JWKS
-- Verifies token was issued by trusted PingOne environment
-- Checks token hasn't expired
-
-3a. **Protected API Lambda**
-- Only executes if authorization succeeds
-- Receives user context from authorizer
-- Returns protected resource/data
-
-3b. **Response**
-- API Gateway returns response to client
-- Includes CORS headers for web applications
+When a client sends an HTTP request to a protected API, it includes a JWT token in the `Authorization: Bearer <JWT_TOKEN>` header. This request is received by the API Gateway, which is configured with a custom JWT authorizer. The authorizer function is triggered and extracts the JWT from the request. It then fetches the public keys from PingOne’s JWKS (JSON Web Key Set) endpoint to validate the token. During this process, the authorizer verifies the JWT’s signature, ensures it was issued by a trusted PingOne environment, and checks that the token has not expired. If everything is valid, the authorizer returns an IAM policy that either allows or denies access, along with any relevant user context. If access is granted, the request proceeds to the protected Lambda function behind the API. This Lambda uses the user context provided by the authorizer to generate a response. Finally, the API Gateway sends this response back to the client, including any necessary CORS headers to support web-based applications.
 
 ## Prerequisites
 
@@ -175,11 +157,4 @@ Returns user information after successful JWT verification.
 - **Token Expiration**: PingOne tokens have limited lifespans, generate new ones as needed
 - **Script Issues**: If `get_token.sh` doesn't work, use alternative token generation methods listed above
 
-## Technologies Used
-
-- **AWS Lambda** - Serverless compute
-- **API Gateway** - HTTP API with custom authorizer
-- **PingOne** - Identity provider and JWT issuer
-- **Python 3.9** - Runtime environment
-- **AWS SAM** - Infrastructure as Code
 
